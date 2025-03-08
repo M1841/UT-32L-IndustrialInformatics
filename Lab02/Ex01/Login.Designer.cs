@@ -77,9 +77,10 @@ namespace Ex01 {
       // 
       button1.AutoSize = true;
       button1.BackColor = Color.FromArgb(42, 42, 42);
+      button1.FlatStyle = FlatStyle.Popup;
       button1.Location = new Point(12, 182);
       button1.Name = "button1";
-      button1.Size = new Size(254, 30);
+      button1.Size = new Size(254, 32);
       button1.TabIndex = 6;
       button1.Text = "Login";
       button1.UseVisualStyleBackColor = false;
