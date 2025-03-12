@@ -1,11 +1,12 @@
-namespace Ex01;
-
-internal static class Program
+namespace Ex01
 {
-  [STAThread]
-  static void Main()
+  internal static class Program
   {
-    ApplicationConfiguration.Initialize();
-    Application.Run(new Login());
+    [STAThread]
+    static void Main()
+    {
+      ApplicationConfiguration.Initialize();
+      Application.Run(new Login());
+    }
   }
 }

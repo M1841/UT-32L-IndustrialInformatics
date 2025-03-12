@@ -7,13 +7,5 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
-  <ItemGroup>
-    <EditorConfigFiles Remove="D:\Home\Mihai\Development\cs\ut-32l-industrial-informatics\Lab02\Ex01\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="D:\Home\Mihai\Development\cs\ut-32l-industrial-informatics\Lab02\Ex01\.editorconfig" />
-  </ItemGroup>
-
+  
 </Project>

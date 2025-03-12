@@ -1,5 +1,7 @@
-namespace Ex01 {
-  partial class Welcome {
+namespace Ex01
+{
+  partial class Welcome
+  {
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -9,8 +11,10 @@ namespace Ex01 {
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-    protected override void Dispose(bool disposing) {
-      if (disposing && (components != null)) {
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing && (components != null))
+      {
         components.Dispose();
       }
       base.Dispose(disposing);
@@ -22,7 +26,8 @@ namespace Ex01 {
     /// Required method for Designer support - do not modify
     /// the contents of this method with the code editor.
     /// </summary>
-    private void InitializeComponent() {
+    private void InitializeComponent()
+    {
       label1 = new Label();
       SuspendLayout();
       // 
