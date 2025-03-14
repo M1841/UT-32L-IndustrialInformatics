@@ -4,8 +4,6 @@ namespace Ex03
   {
     public Calculator()
     {
-      BackColor = Color.FromArgb(26, 26, 26);
-
       Controls.Add(numBox1);
       Controls.Add(numBox2);
       Controls.Add(operatorMenu);
@@ -26,23 +24,17 @@ namespace Ex03
 
     private readonly TextBox numBox1 = new()
     {
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       BorderStyle = BorderStyle.FixedSingle,
       Location = new Point(20, 20)
     };
     private readonly TextBox numBox2 = new()
     {
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       BorderStyle = BorderStyle.FixedSingle,
       Location = new Point(270, 20)
     };
 
     private readonly MenuStrip operatorMenu = new()
     {
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       Location = new Point(130, 20),
       Dock = DockStyle.None
     };
@@ -51,14 +43,11 @@ namespace Ex03
     {
       Text = "=",
       AutoSize = true,
-      ForeColor = Color.FromArgb(239, 239, 239),
       Location = new Point(380, 20)
     };
 
     private readonly TextBox resultBox = new()
     {
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       BorderStyle = BorderStyle.FixedSingle,
       Location = new Point(410, 20),
       ReadOnly = true

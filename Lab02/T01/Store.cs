@@ -4,7 +4,6 @@ namespace T01
   {
     public Store()
     {
-      BackColor = Color.FromArgb(42, 42, 42);
 
       foreach (Album album in Albums)
       {
@@ -38,21 +37,17 @@ namespace T01
     private readonly TabPage albumsPage = new()
     {
       Text = "Albums",
-      BackColor = Color.FromArgb(26, 26, 26),
       Dock = DockStyle.Fill
     };
     private readonly TabPage cartPage = new()
     {
       Text = "Cart",
-      BackColor = Color.FromArgb(26, 26, 26),
       Dock = DockStyle.Fill
     };
     private readonly Button checkoutButton = new()
     {
       AutoSize = true,
       Text = $"Checkout\n€{0:0.##}",
-      ForeColor = Color.FromArgb(239, 239, 239),
-      BackColor = Color.FromArgb(42, 42, 42),
       FlatStyle = FlatStyle.Popup,
       Dock = DockStyle.Bottom,
     };
@@ -63,7 +58,6 @@ namespace T01
       cartPage.Controls.Add(new Label()
       {
         Text = "Cart is empty",
-        ForeColor = Color.FromArgb(239, 239, 239),
         Dock = DockStyle.Fill
       });
     }
@@ -80,8 +74,6 @@ namespace T01
       {
         AutoSize = true,
         Text = $"Add to Cart\n€{album.Price:0.##}",
-        ForeColor = Color.FromArgb(239, 239, 239),
-        BackColor = Color.FromArgb(42, 42, 42),
         FlatStyle = FlatStyle.Popup,
         Dock = DockStyle.Right,
       };
@@ -94,7 +86,6 @@ namespace T01
           cartPage.Controls.Add(new Label()
           {
             Text = $"{item.Title}: {item.Count} * €{item.Price} = €{item.Count * item.Price}",
-            ForeColor = Color.FromArgb(239, 239, 239),
             Dock = DockStyle.Top
           });
         }
@@ -107,7 +98,6 @@ namespace T01
       {
         AutoSize = true,
         Text = $"{album.Title}\n{album.Year}",
-        ForeColor = Color.FromArgb(239, 239, 239),
         Dock = DockStyle.Left
       });
 
@@ -115,7 +105,6 @@ namespace T01
       {
         Image = Image.FromFile($"img/{album.Id}.png"),
         Dock = DockStyle.Left,
-        BackColor = Color.FromArgb(42, 42, 42),
         Width = 130,
         SizeMode = PictureBoxSizeMode.StretchImage
       });

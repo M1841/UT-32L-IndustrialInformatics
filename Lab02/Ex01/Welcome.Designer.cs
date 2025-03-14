@@ -34,8 +34,6 @@ namespace Ex01
       // label1
       // 
       label1.AutoSize = true;
-      label1.BackColor = Color.FromArgb(26, 26, 26);
-      label1.ForeColor = Color.FromArgb(239, 239, 239);
       label1.Location = new Point(12, 9);
       label1.Name = "label1";
       label1.Size = new Size(71, 20);
@@ -46,10 +44,8 @@ namespace Ex01
       // 
       AutoScaleDimensions = new SizeF(8F, 20F);
       AutoScaleMode = AutoScaleMode.Font;
-      BackColor = Color.FromArgb(26, 26, 26);
       ClientSize = new Size(262, 43);
       Controls.Add(label1);
-      ForeColor = Color.FromArgb(239, 239, 239);
       Name = "Welcome";
       Text = "Welcome";
       ResumeLayout(false);

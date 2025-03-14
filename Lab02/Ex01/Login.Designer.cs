@@ -48,10 +48,8 @@ namespace Ex01
       // 
       // textBox1
       // 
-      textBox1.BackColor = Color.FromArgb(42, 42, 42);
       textBox1.BorderStyle = BorderStyle.FixedSingle;
       textBox1.Cursor = Cursors.IBeam;
-      textBox1.ForeColor = Color.FromArgb(239, 239, 239);
       textBox1.Location = new Point(12, 32);
       textBox1.Name = "textBox1";
       textBox1.Size = new Size(254, 27);
@@ -68,10 +66,8 @@ namespace Ex01
       // 
       // textBox2
       // 
-      textBox2.BackColor = Color.FromArgb(42, 42, 42);
       textBox2.BorderStyle = BorderStyle.FixedSingle;
       textBox2.Cursor = Cursors.IBeam;
-      textBox2.ForeColor = Color.FromArgb(239, 239, 239);
       textBox2.Location = new Point(12, 115);
       textBox2.Name = "textBox2";
       textBox2.Size = new Size(254, 27);
@@ -81,14 +77,12 @@ namespace Ex01
       // button1
       // 
       button1.AutoSize = true;
-      button1.BackColor = Color.FromArgb(42, 42, 42);
       button1.FlatStyle = FlatStyle.Popup;
       button1.Location = new Point(12, 182);
       button1.Name = "button1";
       button1.Size = new Size(254, 32);
       button1.TabIndex = 6;
       button1.Text = "Login";
-      button1.UseVisualStyleBackColor = false;
       button1.Click += button1_Click;
       // 
       // label3
@@ -113,7 +107,6 @@ namespace Ex01
       // 
       AutoScaleDimensions = new SizeF(8F, 20F);
       AutoScaleMode = AutoScaleMode.Font;
-      BackColor = Color.FromArgb(26, 26, 26);
       ClientSize = new Size(278, 226);
       Controls.Add(label4);
       Controls.Add(label3);
@@ -122,7 +115,6 @@ namespace Ex01
       Controls.Add(label2);
       Controls.Add(textBox1);
       Controls.Add(label1);
-      ForeColor = Color.FromArgb(239, 239, 239);
       Name = "Login";
       Text = "Login";
       ResumeLayout(false);

@@ -6,8 +6,6 @@ namespace Ex02
   {
     public Backups()
     {
-      BackColor = Color.FromArgb(26, 26, 26);
-
       exitButton.Click += HandleExit;
       copyButton.Click += HandleCopy;
       deleteButton.Click += HandleDelete;
@@ -22,13 +20,11 @@ namespace Ex02
       {
         Text = "Local",
         Location = new Point(50, 20),
-        ForeColor = Color.FromArgb(239, 239, 239)
       });
       Controls.Add(new Label()
       {
         Text = "Cloud",
         Location = new Point(390, 20),
-        ForeColor = Color.FromArgb(239, 239, 239)
       });
 
       string content = File.ReadAllText("items.json");
@@ -45,8 +41,6 @@ namespace Ex02
 
     private readonly ListBox listBox1 = new()
     {
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       Location = new Point(50, y: 50),
       Width = 160,
       Height = 140,
@@ -54,8 +48,6 @@ namespace Ex02
     };
     private readonly ListBox listBox2 = new()
     {
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       Location = new Point(390, y: 50),
       Width = 160,
       Height = 140,
@@ -66,30 +58,21 @@ namespace Ex02
       Text = "Copy",
       Location = new Point(260, 50),
       AutoSize = true,
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       FlatStyle = FlatStyle.Popup,
-      UseVisualStyleBackColor = false
     };
     private readonly Button deleteButton = new()
     {
       Text = "Delete",
       Location = new Point(260, 100),
       AutoSize = true,
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       FlatStyle = FlatStyle.Popup,
-      UseVisualStyleBackColor = false
     };
     private readonly Button exitButton = new()
     {
       Text = "Exit",
       Location = new Point(260, 150),
       AutoSize = true,
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       FlatStyle = FlatStyle.Popup,
-      UseVisualStyleBackColor = false
     };
 
     public static void HandleExit(object? sender, EventArgs e)

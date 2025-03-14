@@ -4,7 +4,6 @@ namespace Ex04
   {
     public Booking()
     {
-      BackColor = Color.FromArgb(42, 42, 42);
       Controls.Add(tabControl);
       tabControl.Controls.Add(elementsPage);
       tabControl.Controls.Add(radiosPage);
@@ -26,7 +25,6 @@ namespace Ex04
         {
           Text = $"{i} Seat{(i > 1 ? "s" : "")}",
           Dock = DockStyle.Top,
-          ForeColor = Color.FromArgb(239, 239, 239)
         });
       }
 
@@ -36,7 +34,6 @@ namespace Ex04
         {
           Text = $"{item} Class",
           Dock = DockStyle.Top,
-          ForeColor = Color.FromArgb(239, 239, 239)
         });
       }
 
@@ -49,18 +46,14 @@ namespace Ex04
     };
     private readonly TabPage elementsPage = new()
     {
-      BackColor = Color.FromArgb(26, 26, 26),
       Text = "Destination",
     };
     private readonly TabPage radiosPage = new()
     {
-      BackColor = Color.FromArgb(26, 26, 26),
       Text = "Ticket",
     };
     private readonly ListBox elementsList = new()
     {
-      BackColor = Color.FromArgb(26, 26, 26),
-      ForeColor = Color.FromArgb(239, 239, 239),
       Width = 160,
       Height = 430,
     };
@@ -80,10 +73,7 @@ namespace Ex04
       Text = "Book",
       Location = new Point(360, 350),
       AutoSize = true,
-      BackColor = Color.FromArgb(42, 42, 42),
-      ForeColor = Color.FromArgb(239, 239, 239),
       FlatStyle = FlatStyle.Popup,
-      UseVisualStyleBackColor = false
     };
 
     private void DisplayPicture(object? sender, EventArgs e)
