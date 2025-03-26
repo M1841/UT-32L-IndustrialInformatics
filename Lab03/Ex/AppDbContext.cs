@@ -15,24 +15,24 @@ namespace Ex
 
     public static void SeedData()
     {
-      using var db = new AppDbContext();
+      using AppDbContext db = new();
       if (!db.Database.EnsureCreated()) { return; }
 
       University UTCN = new()
       {
-        Name = "UTCN",
+        Name = "Universitatea Tehnică din Cluj-Napoca",
         City = "Cluj-Napoca"
       };
-      UTCN.Faculties.Add(new() { Name = "AC" });
-      UTCN.Faculties.Add(new() { Name = "ETTI" });
+      UTCN.Faculties.Add(new() { Name = "Automatică și Calculatoare" });
+      UTCN.Faculties.Add(new() { Name = "Electronică, Telecomunicații și Tehnologia Informației" });
 
       University UPB = new()
       {
-        Name = "UPB",
+        Name = "Universitatea Politehnică București",
         City = "București"
       };
-      UPB.Faculties.Add(new() { Name = "IE" });
-      UPB.Faculties.Add(new() { Name = "IMM" });
+      UPB.Faculties.Add(new() { Name = "Ingierie Electrică" });
+      UPB.Faculties.Add(new() { Name = "Inginerie Mecanică și Mecatronică" });
 
       db.Add(UTCN);
       db.Add(UPB);
@@ -50,6 +50,11 @@ namespace Ex
     public int Code { get; set; }
 
     public ICollection<Faculty> Faculties { get; set; } = [];
+
+    public override string ToString()
+    {
+      return Name;
+    }
   }
 
   public class Faculty
@@ -62,5 +67,10 @@ namespace Ex
     [JsonIgnore]
     [ForeignKey(nameof(Code))]
     public University? University { get; set; }
+
+    public override string ToString()
+    {
+      return Name;
+    }
   }
 }
