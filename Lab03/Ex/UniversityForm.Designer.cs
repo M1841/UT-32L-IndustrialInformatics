@@ -1,6 +1,6 @@
-﻿namespace Ex
+namespace Ex
 {
-  partial class MainForm
+  public partial class UniversityForm : Form
   {
     private System.ComponentModel.IContainer components = null;
 
@@ -17,8 +17,8 @@
     {
       this.components = new System.ComponentModel.Container();
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(800, 450);
-      this.Text = "MainForm";
+      this.ClientSize = new System.Drawing.Size(400, 150);
+      this.Text = "UniversityForm";
     }
   }
 }

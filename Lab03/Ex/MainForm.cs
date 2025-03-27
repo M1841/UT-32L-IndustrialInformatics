@@ -8,13 +8,15 @@ namespace Ex
     {
       // AppDbContext.SeedData();
 
-      using AppDbContext db = new();
       InitializeComponent();
 
       Controls.Add(leftGroup);
-      foreach (var university in db.Universities.Include(u => u.Faculties).OrderBy(u => u.Name))
+      using (AppDbContext db = new())
       {
-        universitiesList.Items.Add(university);
+        foreach (var university in db.Universities.Include(u => u.Faculties).OrderBy(u => u.Name))
+        {
+          universitiesList.Items.Add(university);
+        }
       }
       universitiesList.Click += (sender, args) =>
       {
@@ -33,6 +35,39 @@ namespace Ex
       leftGroup.Controls.Add(universitiesList);
       leftGroup.Controls.Add(universitiesLabel);
       leftGroup.Controls.Add(buttonGroup);
+      deleteButton.Click += (sender, args) =>
+      {
+        if (universitiesList.SelectedItem != null)
+        {
+          University university = (University)universitiesList.SelectedItem!;
+          DialogResult messageBoxResult = MessageBox.Show(
+            $"Are you sure you want to delete \"{university.Name}\"?",
+            "Confirm deletion",
+            MessageBoxButtons.YesNo);
+
+          if (messageBoxResult == DialogResult.Yes)
+          {
+            using AppDbContext db = new();
+            db.Remove(university);
+            db.SaveChanges();
+            universitiesList.Items.Remove(university);
+          }
+        }
+      };
+      editButton.Click += (sender, args) =>
+      {
+        if (universitiesList.SelectedItem != null)
+        {
+          University university = (University)universitiesList.SelectedItem!;
+          UniversityForm editForm = new(university);
+          editForm.Show();
+        }
+      };
+      addButton.Click += (sender, args) =>
+      {
+        UniversityForm addForm = new();
+        addForm.Show();
+      };
       buttonGroup.Controls.Add(deleteButton);
       buttonGroup.Controls.Add(editButton);
       buttonGroup.Controls.Add(addButton);
@@ -52,7 +87,7 @@ namespace Ex
       Dock = DockStyle.Left,
       Width = 400
     };
-    readonly ListBox universitiesList = new()
+    public static readonly ListBox universitiesList = new()
     {
       Dock = DockStyle.Top,
       Height = 350
