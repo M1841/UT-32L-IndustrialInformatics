@@ -9,14 +9,16 @@ namespace Ex
       {
         if (nameTextbox.Text != "" && cityTextbox.Text != "")
         {
-          using AppDbContext db = new();
           University university = new()
           {
             Name = nameTextbox.Text,
             City = cityTextbox.Text
           };
+
+          using AppDbContext db = new();
           db.Add(university);
           db.SaveChanges();
+
           MainForm.universitiesList.Items.Add(university);
           Close();
         }
@@ -36,11 +38,14 @@ namespace Ex
         {
           int index = MainForm.universitiesList.Items.IndexOf(university);
           MainForm.universitiesList.Items.Remove(university);
-          using AppDbContext db = new();
+
           university.Name = nameTextbox.Text;
           university.City = cityTextbox.Text;
+
+          using AppDbContext db = new();
           db.Update(university);
           db.SaveChanges();
+
           MainForm.universitiesList.Items.Insert(index, university);
           Close();
         }

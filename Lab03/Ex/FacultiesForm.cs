@@ -7,30 +7,84 @@ namespace Ex
     public FacultiesForm()
     {
       InitializeComponent();
-      facultiesGridView.ColumnCount = 3;
-      facultiesGridView.Columns[0].Name = "ID";
-      facultiesGridView.Columns[0].Width = 30;
-      facultiesGridView.Columns[1].Name = "Name";
-      facultiesGridView.Columns[1].Width = 400;
-      facultiesGridView.Columns[2].Name = "University";
-      facultiesGridView.Columns[2].Width = 290;
+
       using (AppDbContext db = new())
       {
-        foreach (Faculty faculty in db.Faculties.Include(f => f.University))
-        {
-          facultiesGridView.Rows.Add([
-            faculty.Id,
-            faculty.Name,
-            faculty.University?.Name ?? "-"
-          ]);
-        }
+        facultiesSource.DataSource = db.Faculties.Include(f => f.University);
+        facultiesGridView.DataSource = facultiesSource;
       }
+
+      facultiesGridView.DataBindingComplete += (sender, args) =>
+      {
+        facultiesGridView.Columns[nameof(Faculty.Id)]!.ReadOnly = true;
+        facultiesGridView.Columns[nameof(Faculty.Code)]!.ReadOnly = true;
+        facultiesGridView.Columns[nameof(Faculty.University)]!.ReadOnly = true;
+      };
+
+      facultiesGridView.UserDeletingRow += (sender, args) =>
+      {
+        int? id = (int?)args.Row!.Cells[nameof(Faculty.Id)].Value;
+        if (id != null)
+        {
+          using AppDbContext db = new();
+          Faculty faculty = db.Faculties
+            .Where(f => f.Id == id)
+            .First();
+
+          DialogResult messageBoxResult = MessageBox.Show(
+            $"Are you sure you want to delete \"{faculty.Name}\"?",
+            "Confirm deletion",
+            MessageBoxButtons.YesNo);
+
+          if (messageBoxResult == DialogResult.Yes)
+          {
+            db.Remove(faculty);
+            db.SaveChanges();
+
+            MainForm.universitiesList.Items.Clear();
+            MainForm.facultiesList.Items.Clear();
+            foreach (University university in db.Universities
+              .Include(u => u.Faculties)
+              .OrderBy(u => u.Name))
+            {
+              MainForm.universitiesList.Items.Add(university);
+            }
+          }
+          else
+          {
+            args.Cancel = true;
+          }
+        }
+      };
+      facultiesGridView.CellValueChanged += (sender, args) =>
+      {
+        if (args.ColumnIndex == 1 && facultiesSource[args.RowIndex] is Faculty faculty)
+        {
+          using AppDbContext db = new();
+          db.Update(faculty);
+          db.SaveChanges();
+
+          MainForm.universitiesList.Items.Clear();
+          MainForm.facultiesList.Items.Clear();
+          foreach (University university in db.Universities
+            .Include(u => u.Faculties)
+            .OrderBy(u => u.Name))
+          {
+            MainForm.universitiesList.Items.Add(university);
+          }
+        }
+      };
       Controls.Add(facultiesGridView);
     }
 
     readonly DataGridView facultiesGridView = new()
     {
-      Dock = DockStyle.Fill
+      Dock = DockStyle.Fill,
+      AutoGenerateColumns = true,
+      AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells,
+      AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells,
+      EditMode = DataGridViewEditMode.EditOnF2,
     };
+    readonly BindingSource facultiesSource = new();
   }
 }

@@ -6,24 +6,30 @@ namespace Ex
   {
     public MainForm()
     {
-      // AppDbContext.SeedData();
+      AppDbContext.SeedData();
       InitializeComponent();
 
       Controls.Add(leftGroup);
+      leftGroup.Controls.Add(cityTextbox);
+      leftGroup.Controls.Add(cityLabel);
+      leftGroup.Controls.Add(codeTextbox);
+      leftGroup.Controls.Add(codeLabel);
       using (AppDbContext db = new())
       {
-        foreach (var university in db.Universities.Include(u => u.Faculties).OrderBy(u => u.Name))
+        foreach (var university in db.Universities
+          .Include(u => u.Faculties)
+          .OrderBy(u => u.Name))
         {
           universitiesList.Items.Add(university);
         }
       }
       universitiesList.Click += (sender, args) =>
       {
-        if (universitiesList.SelectedItem != null)
+        if (universitiesList.SelectedItem is University university)
         {
-          University university = (University)universitiesList.SelectedItem!;
           facultiesList.Items.Clear();
-          foreach (var faculty in university.Faculties.OrderBy(f => f.Name))
+          foreach (var faculty in university.Faculties
+            .OrderBy(f => f.Name))
           {
             facultiesList.Items.Add(faculty);
           }
@@ -36,9 +42,8 @@ namespace Ex
       leftGroup.Controls.Add(buttonGroup);
       deleteButton.Click += (sender, args) =>
       {
-        if (universitiesList.SelectedItem != null)
+        if (universitiesList.SelectedItem is University university)
         {
-          University university = (University)universitiesList.SelectedItem!;
           DialogResult messageBoxResult = MessageBox.Show(
             $"Are you sure you want to delete \"{university.Name}\"?",
             "Confirm deletion",
@@ -55,9 +60,8 @@ namespace Ex
       };
       editButton.Click += (sender, args) =>
       {
-        if (universitiesList.SelectedItem != null)
+        if (universitiesList.SelectedItem is University university)
         {
-          University university = (University)universitiesList.SelectedItem!;
           UniversityForm editForm = new(university);
           editForm.Show();
         }
@@ -72,10 +76,6 @@ namespace Ex
       buttonGroup.Controls.Add(addButton);
 
       Controls.Add(rightGroup);
-      rightGroup.Controls.Add(cityTextbox);
-      rightGroup.Controls.Add(cityLabel);
-      rightGroup.Controls.Add(codeTextbox);
-      rightGroup.Controls.Add(codeLabel);
       rightGroup.Controls.Add(facultiesList);
       rightGroup.Controls.Add(facultiesLabel);
       facultiesTableButton.Click += (sender, args) =>
@@ -94,7 +94,7 @@ namespace Ex
     public static readonly ListBox universitiesList = new()
     {
       Dock = DockStyle.Top,
-      Height = 350
+      Height = 250
     };
     readonly Label universitiesLabel = new()
     {
@@ -149,10 +149,10 @@ namespace Ex
       Text = "Code",
       Dock = DockStyle.Top
     };
-    readonly ListBox facultiesList = new()
+    public static readonly ListBox facultiesList = new()
     {
       Dock = DockStyle.Top,
-      Height = 250
+      Height = 350
     };
     readonly Label facultiesLabel = new()
     {
