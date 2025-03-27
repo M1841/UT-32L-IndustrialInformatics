@@ -75,6 +75,11 @@ namespace Ex
         }
       };
       Controls.Add(facultiesGridView);
+      Controls.Add(inputGroup);
+      inputGroup.Controls.Add(nameTextbox);
+      inputGroup.Controls.Add(codeTextbox);
+      inputGroup.Controls.Add(universityTextbox);
+      inputGroup.Controls.Add(addButton);
     }
 
     readonly DataGridView facultiesGridView = new()
@@ -86,5 +91,36 @@ namespace Ex
       EditMode = DataGridViewEditMode.EditOnF2,
     };
     readonly BindingSource facultiesSource = new();
+    readonly GroupBox inputGroup = new()
+    {
+      Dock = DockStyle.Bottom,
+      Height = 60
+    };
+    readonly TextBox nameTextbox = new()
+    {
+      Location = new Point(102, 20),
+      Width = 398,
+      PlaceholderText = "Name"
+    };
+    readonly TextBox codeTextbox = new()
+    {
+      Location = new Point(500, 20),
+      Width = 72,
+      PlaceholderText = "Code"
+    };
+    readonly TextBox universityTextbox = new()
+    {
+      Location = new Point(572, 20),
+      Width = 264,
+      PlaceholderText = "University",
+      ReadOnly = true,
+      Enabled = false
+    };
+    readonly Button addButton = new()
+    {
+      Text = "Add",
+      Location = new Point(20, 20),
+      Height = 30
+    };
   }
 }
