@@ -55,6 +55,7 @@ namespace Ex
 
     void AddControls()
     {
+      Padding = new Padding(10, 10, 10, 10);
       Controls.Add(nameLabel);
       Controls.Add(nameTextbox);
       Controls.Add(cityLabel);

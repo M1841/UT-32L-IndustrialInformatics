@@ -89,12 +89,13 @@ namespace Ex
     readonly GroupBox leftGroup = new()
     {
       Dock = DockStyle.Left,
-      Width = 400
+      Width = 400,
+      Padding = new Padding(10, 0, 10, 0)
     };
     public static readonly ListBox universitiesList = new()
     {
       Dock = DockStyle.Top,
-      Height = 250
+      Height = 245
     };
     readonly Label universitiesLabel = new()
     {
@@ -104,35 +105,37 @@ namespace Ex
     readonly GroupBox buttonGroup = new()
     {
       Dock = DockStyle.Bottom,
-      Height = 70
+      Height = 70,
     };
     readonly Button addButton = new()
     {
       Text = "Add",
       Dock = DockStyle.Left,
-      Width = 129
+      Width = 124
     };
     readonly Button editButton = new()
     {
       Text = "Edit",
       Dock = DockStyle.Left,
-      Width = 129
+      Width = 124
     };
     readonly Button deleteButton = new()
     {
       Text = "Delete",
       Dock = DockStyle.Left,
-      Width = 129
+      Width = 124
     };
     readonly GroupBox rightGroup = new()
     {
       Dock = DockStyle.Right,
-      Width = 400
+      Width = 400,
+      Padding = new Padding(10, 0, 10, 0)
     };
     readonly TextBox cityTextbox = new()
     {
       ReadOnly = true,
-      Dock = DockStyle.Top
+      Dock = DockStyle.Top,
+      Enabled = false
     };
     readonly Label cityLabel = new()
     {
@@ -142,7 +145,8 @@ namespace Ex
     readonly TextBox codeTextbox = new()
     {
       ReadOnly = true,
-      Dock = DockStyle.Top
+      Dock = DockStyle.Top,
+      Enabled = false,
     };
     readonly Label codeLabel = new()
     {
