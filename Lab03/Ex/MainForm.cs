@@ -12,7 +12,7 @@ namespace Ex
       InitializeComponent();
 
       Controls.Add(leftGroup);
-      foreach (var university in db.Universities.Include(u => u.Faculties))
+      foreach (var university in db.Universities.Include(u => u.Faculties).OrderBy(u => u.Name))
       {
         universitiesList.Items.Add(university);
       }
@@ -22,7 +22,7 @@ namespace Ex
         {
           University university = (University)universitiesList.SelectedItem!;
           facultiesList.Items.Clear();
-          foreach (var faculty in university.Faculties)
+          foreach (var faculty in university.Faculties.OrderBy(f => f.Name))
           {
             facultiesList.Items.Add(faculty);
           }

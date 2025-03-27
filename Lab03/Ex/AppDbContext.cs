@@ -23,8 +23,15 @@ namespace Ex
         Name = "Universitatea Tehnică din Cluj-Napoca",
         City = "Cluj-Napoca"
       };
+      UTCN.Faculties.Add(new() { Name = "Arhitectură și Urbanism" });
       UTCN.Faculties.Add(new() { Name = "Automatică și Calculatoare" });
+      UTCN.Faculties.Add(new() { Name = "Autovehicule Rutiere, Mecatronică și Mecanică" });
+      UTCN.Faculties.Add(new() { Name = "Construcții" });
       UTCN.Faculties.Add(new() { Name = "Electronică, Telecomunicații și Tehnologia Informației" });
+      UTCN.Faculties.Add(new() { Name = "Ingineria Materialelor și a Mediului" });
+      UTCN.Faculties.Add(new() { Name = "Ingineria Instalațiilor" });
+      UTCN.Faculties.Add(new() { Name = "Inginerie Electrică" });
+      UTCN.Faculties.Add(new() { Name = "Inginerie Industrială, Robotică și Managementul Producției" });
 
       University UPB = new()
       {
@@ -32,7 +39,20 @@ namespace Ex
         City = "București"
       };
       UPB.Faculties.Add(new() { Name = "Ingierie Electrică" });
+      UPB.Faculties.Add(new() { Name = "Inginerie Industrială și Robotică" });
+      UPB.Faculties.Add(new() { Name = "Inginerie Chimică și Biotehnologii" });
+      UPB.Faculties.Add(new() { Name = "Energetică" });
+      UPB.Faculties.Add(new() { Name = "Ingineria Sistemelor Biotehnice" });
+      UPB.Faculties.Add(new() { Name = "Inginerie în Limbi Străine" });
+      UPB.Faculties.Add(new() { Name = "Automatică și Calculatoare" });
+      UPB.Faculties.Add(new() { Name = "Transporturi" });
+      UPB.Faculties.Add(new() { Name = "Științe Aplicate" });
+      UPB.Faculties.Add(new() { Name = "Electronică, Telecomunicații și Tehnologia Informației" });
+      UPB.Faculties.Add(new() { Name = "Inginerie Aerospațială" });
+      UPB.Faculties.Add(new() { Name = "Inginerie Medicală" });
       UPB.Faculties.Add(new() { Name = "Inginerie Mecanică și Mecatronică" });
+      UPB.Faculties.Add(new() { Name = "Știința și Ingineria Materialelor" });
+      UPB.Faculties.Add(new() { Name = "Antreprenoriat, Ingineria și Managementul Afacerilor" });
 
       db.Add(UTCN);
       db.Add(UPB);
