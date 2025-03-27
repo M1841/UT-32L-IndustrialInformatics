@@ -7,7 +7,6 @@ namespace Ex
     public MainForm()
     {
       // AppDbContext.SeedData();
-
       InitializeComponent();
 
       Controls.Add(leftGroup);
@@ -79,6 +78,11 @@ namespace Ex
       rightGroup.Controls.Add(codeLabel);
       rightGroup.Controls.Add(facultiesList);
       rightGroup.Controls.Add(facultiesLabel);
+      facultiesTableButton.Click += (sender, args) =>
+      {
+        FacultiesForm facultiesForm = new();
+        facultiesForm.Show();
+      };
       rightGroup.Controls.Add(facultiesTableButton);
     }
 
