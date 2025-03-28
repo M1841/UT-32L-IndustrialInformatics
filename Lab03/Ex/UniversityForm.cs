@@ -1,11 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Ex
 {
   public partial class UniversityForm : Form
   {
     public UniversityForm()
     {
-      button.Text = "Add";
-      button.Click += (sender, args) =>
+      addButton.Text = "Add";
+      addButton.Click += (sender, args) =>
       {
         if (nameTextbox.Text != "" && cityTextbox.Text != "")
         {
@@ -19,6 +21,8 @@ namespace Ex
           db.Add(university);
           db.SaveChanges();
 
+          FacultiesForm.facultiesSource.DataSource = db.Faculties.Include(f => f.University);
+          FacultiesForm.facultiesGridView.DataSource = FacultiesForm.facultiesSource;
           MainForm.universitiesList.Items.Add(university);
           Close();
         }
@@ -31,8 +35,8 @@ namespace Ex
       InitializeComponent();
       nameTextbox.Text = university.Name;
       cityTextbox.Text = university.City;
-      button.Text = "Edit";
-      button.Click += (sender, args) =>
+      addButton.Text = "Edit";
+      addButton.Click += (sender, args) =>
       {
         if (nameTextbox.Text != "" && cityTextbox.Text != "")
         {
@@ -46,6 +50,8 @@ namespace Ex
           db.Update(university);
           db.SaveChanges();
 
+          FacultiesForm.facultiesSource.DataSource = db.Faculties.Include(f => f.University);
+          FacultiesForm.facultiesGridView.DataSource = FacultiesForm.facultiesSource;
           MainForm.universitiesList.Items.Insert(index, university);
           Close();
         }
@@ -56,11 +62,19 @@ namespace Ex
     void AddControls()
     {
       Padding = new Padding(10, 10, 10, 10);
+      nameTextbox.KeyUp += HandleEdit;
+      cityTextbox.KeyUp += HandleEdit;
+
       Controls.Add(nameLabel);
       Controls.Add(nameTextbox);
       Controls.Add(cityLabel);
       Controls.Add(cityTextbox);
-      Controls.Add(button);
+      Controls.Add(addButton);
+    }
+
+    void HandleEdit(object? sender, KeyEventArgs args)
+    {
+      addButton.Enabled = nameTextbox.Text != "" && cityTextbox.Text != "";
     }
 
     readonly Label nameLabel = new()
@@ -81,10 +95,11 @@ namespace Ex
     {
       Dock = DockStyle.Bottom
     };
-    readonly Button button = new()
+    readonly Button addButton = new()
     {
       Dock = DockStyle.Bottom,
-      Height = 50
+      Height = 50,
+      Enabled = false
     };
   }
 }

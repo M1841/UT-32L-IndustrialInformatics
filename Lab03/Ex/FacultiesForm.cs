@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ex
@@ -41,13 +42,25 @@ namespace Ex
             db.Remove(faculty);
             db.SaveChanges();
 
-            MainForm.universitiesList.Items.Clear();
-            MainForm.facultiesList.Items.Clear();
-            foreach (University university in db.Universities
-              .Include(u => u.Faculties)
-              .OrderBy(u => u.Name))
+            foreach (University university in MainForm.universitiesList.Items)
             {
-              MainForm.universitiesList.Items.Add(university);
+              if (
+                university.Code == faculty.Code &&
+                university.Faculties
+                  .Where(f => f.Id == faculty.Id)
+                  .FirstOrDefault() is Faculty oldFaculty)
+              {
+                university.Faculties.Remove(oldFaculty);
+                break;
+              }
+            }
+            foreach (Faculty oldFaculty in MainForm.facultiesList.Items)
+            {
+              if (oldFaculty.Id == faculty.Id)
+              {
+                MainForm.facultiesList.Items.Remove(oldFaculty);
+                break;
+              }
             }
           }
           else
@@ -64,25 +77,116 @@ namespace Ex
           db.Update(faculty);
           db.SaveChanges();
 
-          MainForm.universitiesList.Items.Clear();
-          MainForm.facultiesList.Items.Clear();
-          foreach (University university in db.Universities
-            .Include(u => u.Faculties)
-            .OrderBy(u => u.Name))
+          foreach (University university in MainForm.universitiesList.Items)
           {
-            MainForm.universitiesList.Items.Add(university);
+            if (
+              university.Code == faculty.Code &&
+              university.Faculties
+                .Where(f => f.Id == faculty.Id)
+                .FirstOrDefault() is Faculty oldFaculty)
+            {
+              university.Faculties.Clear();
+              foreach (Faculty f in db.Faculties
+                .Where(f => f.Code == university.Code)
+                .OrderBy(f => f.Name))
+              {
+                university.Faculties.Add(f);
+              }
+            }
+          }
+          foreach (Faculty oldFaculty in MainForm.facultiesList.Items)
+          {
+            if (oldFaculty.Id == faculty.Id)
+            {
+              int index = MainForm.facultiesList.Items.IndexOf(oldFaculty);
+              MainForm.facultiesList.Items.Remove(oldFaculty);
+              MainForm.facultiesList.Items.Insert(index, faculty);
+              break;
+            }
           }
         }
       };
       Controls.Add(facultiesGridView);
       Controls.Add(inputGroup);
+
+      nameTextbox.KeyUp += (sender, args) =>
+      {
+        isNameValid = nameTextbox.Text != "";
+        addButton.Enabled = isNameValid && isCodeValid;
+      };
+      codeTextbox.KeyUp += (sender, args) =>
+      {
+        if (int.TryParse(codeTextbox.Text, out int code))
+        {
+          using AppDbContext db = new();
+          if (db.Universities.Where(u => u.Code == code).FirstOrDefault()
+              is University university)
+          {
+            universityTextbox.Text = university.Name;
+            isCodeValid = true;
+            this.university = university;
+          }
+          else
+          {
+            universityTextbox.Text = "???";
+            isCodeValid = false;
+            this.university = null;
+          }
+        }
+        else
+        {
+          universityTextbox.Text = "???";
+          isCodeValid = false;
+          university = null;
+        }
+        addButton.Enabled = isNameValid && isCodeValid;
+      };
+      addButton.Click += (sender, args) =>
+      {
+        if (university != null)
+        {
+          Faculty faculty = new() { Name = nameTextbox.Text };
+          university.Faculties.Add(faculty);
+
+          using AppDbContext db = new();
+          db.Update(university);
+          db.SaveChanges();
+
+          facultiesSource.DataSource = db.Faculties.Include(f => f.University);
+          facultiesGridView.DataSource = facultiesSource;
+
+          foreach (University university in MainForm.universitiesList.Items)
+          {
+            if (university.Code == this.university.Code)
+            {
+              university.Faculties.Add(faculty);
+              break;
+            }
+          }
+          if (
+            MainForm.universitiesList.SelectedItem is University selectedUniversity &&
+            selectedUniversity.Code == university.Code)
+          {
+            MainForm.facultiesList.Items.Add(faculty);
+          }
+          nameTextbox.Text = "";
+          codeTextbox.Text = "";
+          universityTextbox.Text = "";
+          addButton.Enabled = false;
+        }
+      };
+
       inputGroup.Controls.Add(nameTextbox);
       inputGroup.Controls.Add(codeTextbox);
       inputGroup.Controls.Add(universityTextbox);
       inputGroup.Controls.Add(addButton);
     }
 
-    readonly DataGridView facultiesGridView = new()
+    bool isNameValid = false;
+    bool isCodeValid = false;
+    University? university = null;
+
+    public static readonly DataGridView facultiesGridView = new()
     {
       Dock = DockStyle.Fill,
       AutoGenerateColumns = true,
@@ -90,7 +194,7 @@ namespace Ex
       AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells,
       EditMode = DataGridViewEditMode.EditOnF2,
     };
-    readonly BindingSource facultiesSource = new();
+    public static readonly BindingSource facultiesSource = new();
     readonly GroupBox inputGroup = new()
     {
       Dock = DockStyle.Bottom,
@@ -120,7 +224,8 @@ namespace Ex
     {
       Text = "Add",
       Location = new Point(20, 20),
-      Height = 30
+      Height = 30,
+      Enabled = false
     };
   }
 }

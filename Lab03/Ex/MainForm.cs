@@ -27,6 +27,8 @@ namespace Ex
       {
         if (universitiesList.SelectedItem is University university)
         {
+          editButton.Enabled = true;
+          deleteButton.Enabled = true;
           facultiesList.Items.Clear();
           foreach (var faculty in university.Faculties
             .OrderBy(f => f.Name))
@@ -51,10 +53,21 @@ namespace Ex
 
           if (messageBoxResult == DialogResult.Yes)
           {
+            universitiesList.Items.Remove(university);
+            facultiesList.Items.Clear();
+            codeTextbox.Text = "";
+            cityTextbox.Text = "";
+
             using AppDbContext db = new();
             db.Remove(university);
+            foreach (Faculty faculty in university.Faculties)
+            {
+              db.Remove(faculty);
+            }
             db.SaveChanges();
-            universitiesList.Items.Remove(university);
+
+            FacultiesForm.facultiesSource.DataSource = db.Faculties.Include(f => f.University);
+            FacultiesForm.facultiesGridView.DataSource = FacultiesForm.facultiesSource;
           }
         }
       };
@@ -117,13 +130,15 @@ namespace Ex
     {
       Text = "Edit",
       Dock = DockStyle.Left,
-      Width = 124
+      Width = 124,
+      Enabled = false
     };
     readonly Button deleteButton = new()
     {
       Text = "Delete",
       Dock = DockStyle.Left,
-      Width = 124
+      Width = 124,
+      Enabled = false
     };
     readonly GroupBox rightGroup = new()
     {
