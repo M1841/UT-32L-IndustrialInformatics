@@ -11,7 +11,7 @@ namespace Ex
     public DbSet<Faculty> Faculties { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
-      => options.UseSqlite("DataSource=Lab03Ex.db;cache=shared");
+      => options.UseSqlServer("Server=localhost;Database=II_L03E00;Trusted_Connection=True;Encrypt=False");
 
     public static void SeedData()
     {
