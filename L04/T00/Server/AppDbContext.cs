@@ -21,7 +21,8 @@ public class AppDbContext : DbContext
     {
       Author = "User0",
       Title = "Thread 1",
-      Description = "First thread, shows two replies"
+      Description = "First thread, shows two replies",
+      CreatedAt = DateTime.Now
     };
     thread1.Replies.Add(new()
     {
@@ -40,7 +41,8 @@ public class AppDbContext : DbContext
     {
       Author = "User1",
       Title = "Thread 2",
-      Description = "Second thread, shows one reply"
+      Description = "Second thread, shows one reply",
+      CreatedAt = DateTime.Now
     };
     thread2.Replies.Add(new()
     {
@@ -61,6 +63,8 @@ public class Thread
   public required string Author { get; set; }
   public required string Title { get; set; }
   public string? Description { get; set; }
+  public required DateTime CreatedAt { get; set; }
+  public DateTime? UpdatedAt { get; set; }
 
   public ICollection<Reply> Replies { get; set; } = [];
 }

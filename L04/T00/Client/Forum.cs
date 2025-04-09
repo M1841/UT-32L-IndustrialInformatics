@@ -7,47 +7,52 @@ public partial class Forum : Form
 {
   public Forum()
   {
-    InitializeComponent();
-
-    Controls.Add(topGroup);
-    topGroup.Controls.Add(userLabel);
-    topGroup.Controls.Add(userTextbox);
-    userTextbox.KeyUp += (sender, args) =>
-    {
-      newThreadBtn.Enabled = userTextbox.Text != "";
-    };
-    topGroup.Controls.Add(searchLabel);
-    topGroup.Controls.Add(searchTextbox);
-    searchTextbox.KeyUp += (sender, args) =>
-    {
-      if (searchTextbox.Text != "")
-      {
-        UpdateThreads(Threads
-          .Where(t =>
-            t.Title.Contains(
-              searchTextbox.Text,
-              StringComparison.CurrentCultureIgnoreCase) ||
-            t.Author.Contains(
-              searchTextbox.Text,
-              StringComparison.CurrentCultureIgnoreCase) ||
-            (t.Description?.Contains(
-              searchTextbox.Text,
-              comparisonType: StringComparison.CurrentCultureIgnoreCase) ?? false)
-          )
-          .ToArray()
-        );
-      }
-      else
-      {
-        UpdateThreads(Threads);
-      }
-    };
-    topGroup.Controls.Add(newThreadBtn);
-
-    Controls.Add(threadsPanel);
-
     try
     {
+      InitializeComponent();
+
+      Controls.Add(topGroup);
+      topGroup.Controls.Add(userLabel);
+      topGroup.Controls.Add(userTextbox);
+      userTextbox.KeyUp += (sender, args) =>
+      {
+        newThreadBtn.Enabled = userTextbox.Text != "";
+        User = userTextbox.Text;
+      };
+      topGroup.Controls.Add(searchLabel);
+      topGroup.Controls.Add(searchTextbox);
+      searchTextbox.KeyUp += (sender, args) =>
+      {
+        if (searchTextbox.Text != "")
+        {
+          UpdateThreads(Threads
+            .Where(t =>
+              t.Title.Contains(
+                searchTextbox.Text,
+                StringComparison.CurrentCultureIgnoreCase) ||
+              t.Author.Contains(
+                searchTextbox.Text,
+                StringComparison.CurrentCultureIgnoreCase) ||
+              (t.Description?.Contains(
+                searchTextbox.Text,
+                comparisonType: StringComparison.CurrentCultureIgnoreCase) ?? false)
+            )
+            .ToArray()
+          );
+        }
+        else
+        {
+          UpdateThreads(Threads);
+        }
+      };
+      topGroup.Controls.Add(newThreadBtn);
+      newThreadBtn.Click += (sender, args) =>
+      {
+        new ThreadForm().Show();
+      };
+
+      Controls.Add(ThreadsPanel);
+
       Threads = Task.Run(FetchThreads).Result;
       UpdateThreads(Threads);
     }
@@ -57,22 +62,25 @@ public partial class Forum : Form
     }
   }
 
-  public Thread[] Threads = [];
+  public static string User = "";
 
-  public async Task<Thread[]> FetchThreads()
+  public static Thread[] Threads = [];
+
+  public static async Task<Thread[]> FetchThreads()
   {
-    using HttpResponseMessage response = await http.GetAsync("thread");
+    using HttpResponseMessage response = await Http.GetAsync("thread");
     response.EnsureSuccessStatusCode();
 
     string json = await response.Content.ReadAsStringAsync();
     Thread[] threads = JsonSerializer
-      .Deserialize<Thread[]>(json, jsonOptions)!;
+      .Deserialize<Thread[]>(json, JsonOptions)!;
 
     return threads;
   }
-  public void UpdateThreads(Thread[] threads)
+
+  public static void UpdateThreads(Thread[] threads)
   {
-    threadsPanel.Controls.Clear();
+    ThreadsPanel.Controls.Clear();
 
     foreach (Thread thread in threads)
     {
@@ -81,7 +89,7 @@ public partial class Forum : Form
         Height = 125,
         Width = 1920 / 2 - 35
       };
-      threadsPanel.Controls.Add(threadGroup);
+      ThreadsPanel.Controls.Add(threadGroup);
       threadGroup.Controls.Add(new Label()
       {
         Text = $"{thread.Replies.Count} repl{(thread.Replies.Count == 1 ? "y" : "ies")}",
@@ -94,7 +102,7 @@ public partial class Forum : Form
       });
       threadGroup.Controls.Add(new Label()
       {
-        Text = thread.Author,
+        Text = $"{thread.Author} - {RelativeTime(thread.CreatedAt)}",
         Dock = DockStyle.Top
       });
       threadGroup.Controls.Add(new Label()
@@ -105,6 +113,45 @@ public partial class Forum : Form
     }
   }
 
+  public static string RelativeTime(DateTime dateTime)
+  {
+    TimeSpan timeSpan = DateTime.Now.Subtract(dateTime);
+    if (timeSpan.TotalDays >= 365 * 2)
+    {
+      return $"{timeSpan.TotalDays / 365:0} years ago";
+    }
+    if (timeSpan.TotalDays >= 30 * 2)
+    {
+      return $"{timeSpan.TotalDays / 30:0} months ago";
+    }
+    if (timeSpan.TotalDays >= 7 * 2)
+    {
+      return $"{timeSpan.TotalDays / 7:0} weeks ago";
+    }
+    if (timeSpan.TotalDays > 1)
+    {
+      return $"{timeSpan.TotalDays:0} days ago";
+    }
+    if (timeSpan.TotalHours > 1)
+    {
+      return $"{timeSpan.TotalHours:0} hours ago";
+    }
+    if (timeSpan.TotalMinutes > 1)
+    {
+      return $"{timeSpan.TotalMinutes:0} minutes ago";
+    }
+    return "Now";
+  }
+
+  public static readonly HttpClient Http = new()
+  {
+    BaseAddress = new Uri("http://localhost:5190")
+  };
+  public static JsonSerializerOptions JsonOptions = new()
+  {
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+  };
+
   readonly GroupBox topGroup = new()
   {
     Width = 1920 / 2,
@@ -113,7 +160,7 @@ public partial class Forum : Form
   };
   readonly Label userLabel = new()
   {
-    Text = "Username",
+    Text = "Nickname",
     Width = 120,
     Height = 20,
     Location = new(12, 17)
@@ -145,22 +192,12 @@ public partial class Forum : Form
     Height = 30,
     Location = new(1920 / 2 - 120 - 15, 40)
   };
-  readonly FlowLayoutPanel threadsPanel = new()
+  static readonly FlowLayoutPanel ThreadsPanel = new()
   {
     Width = 1920 / 2,
     Height = 1080 - 110,
     Location = new(15, 90),
     FlowDirection = FlowDirection.TopDown,
-  };
-
-  private readonly HttpClient http = new()
-  {
-    BaseAddress = new Uri("http://localhost:5190")
-  };
-
-  private readonly JsonSerializerOptions jsonOptions = new()
-  {
-    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
   };
 }
 
@@ -170,6 +207,8 @@ public class Thread
   public required string Author { get; set; }
   public required string Title { get; set; }
   public string? Description { get; set; }
+  public required DateTime CreatedAt { get; set; }
+  public DateTime? UpdatedAt { get; set; }
 
   public ICollection<Reply> Replies { get; set; } = [];
 }
