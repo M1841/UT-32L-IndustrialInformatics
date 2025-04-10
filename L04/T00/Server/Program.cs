@@ -37,22 +37,6 @@ public static class Program
       }
     );
 
-    // Thread - READ One
-    app.MapGet(
-      "thread/{id}",
-      async ([FromRoute] Guid id) =>
-      {
-        using AppDbContext db = new();
-
-        Thread? thread = await db.Threads
-          .Include(t => t.Replies)
-          .FirstOrDefaultAsync(t => t.Id == id);
-
-        if (thread == null) { return Results.NotFound(); }
-        return Results.Ok(thread);
-      }
-    );
-
     // Thread - READ All
     app.MapGet(
       "thread",
@@ -140,28 +124,19 @@ public static class Program
       }
     );
 
-    // Reply - READ One
+    // Reply - READ All (under same thread)
     app.MapGet(
       "reply/{id}",
       async ([FromRoute] Guid id) =>
       {
         using AppDbContext db = new();
+        Thread? thread = await db.Threads
+          .Include(t => t.Replies)
+          .FirstOrDefaultAsync(t => t.Id == id);
 
-        Reply? reply = await db.Replies
-            .FirstOrDefaultAsync(r => r.Id == id);
+        if (thread == null) { return Results.NotFound(); }
 
-        if (reply == null) { return Results.NotFound(); }
-        return Results.Ok(reply);
-      }
-    );
-
-    // Reply - READ All
-    app.MapGet(
-      "reply",
-      () =>
-      {
-        using AppDbContext db = new();
-        return Results.Ok(db.Replies.ToArray());
+        return Results.Ok(thread.Replies.ToArray());
       }
     );
 

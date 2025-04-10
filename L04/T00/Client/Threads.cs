@@ -1,15 +1,15 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace L04.T00.Client;
 
-public partial class Forum : Form
+public partial class Threads : Form
 {
-  public Forum()
+  public Threads()
   {
     try
     {
       InitializeComponent();
+
       FormClosed += (sender, args) =>
       {
         Application.Exit();
@@ -18,7 +18,7 @@ public partial class Forum : Form
       Controls.Add(topGroup);
       topGroup.Controls.Add(new Label()
       {
-        Text = User,
+        Text = Program.User,
         Location = new(20, 17)
       });
       topGroup.Controls.Add(searchLabel);
@@ -27,7 +27,7 @@ public partial class Forum : Form
       {
         if (searchTextbox.Text != "")
         {
-          UpdateThreads(Threads
+          Update(Program.Threads
             .Where(t =>
               t.Title.Contains(
                 searchTextbox.Text,
@@ -44,7 +44,7 @@ public partial class Forum : Form
         }
         else
         {
-          UpdateThreads(Threads);
+          Update(Program.Threads);
         }
       };
       topGroup.Controls.Add(newThreadBtn);
@@ -55,8 +55,8 @@ public partial class Forum : Form
 
       Controls.Add(ThreadsPanel);
 
-      Threads = Task.Run(FetchThreads).Result;
-      UpdateThreads(Threads);
+      Program.Threads = Task.Run(Fetch).Result;
+      Update(Program.Threads);
     }
     catch (Exception ex)
     {
@@ -64,23 +64,19 @@ public partial class Forum : Form
     }
   }
 
-  public static string User = "";
-
-  public static Thread[] Threads = [];
-
-  public static async Task<Thread[]> FetchThreads()
+  public static async Task<Thread[]> Fetch()
   {
-    using HttpResponseMessage response = await Http.GetAsync("thread");
+    using HttpResponseMessage response = await Program.Http.GetAsync("thread");
     response.EnsureSuccessStatusCode();
 
     string json = await response.Content.ReadAsStringAsync();
     Thread[] threads = JsonSerializer
-      .Deserialize<Thread[]>(json, JsonOptions)!;
+      .Deserialize<Thread[]>(json, Program.JsonOptions)!;
 
     return threads;
   }
 
-  public static void UpdateThreads(Thread[] threads)
+  public static void Update(Thread[] threads)
   {
     ThreadsPanel.Controls.Clear();
 
@@ -101,9 +97,9 @@ public partial class Forum : Form
       });
       threadGroup.Controls.Add(new Label()
       {
-        Text = $"{thread.Author} - {RelativeTime(thread.CreatedAt)}",
+        Text = $"{thread.Author} - {Program.RelativeTime(thread.CreatedAt)}",
         AutoSize = true,
-        Location = new(750, 0)
+        Location = new(770, 0)
       });
       threadGroup.Controls.Add(new Label()
       {
@@ -111,23 +107,16 @@ public partial class Forum : Form
         AutoSize = true,
         Location = new(10, 30)
       });
-      threadGroup.Controls.Add(new Label()
-      {
-        Text = $"{thread.Replies.Count} repl{(thread.Replies.Count == 1 ? "y" : "ies")}",
-        AutoSize = true,
-        Location = new(10, 95)
-      });
 
-      Button openButton = new()
+      Button viewRepliesBtn = new()
       {
-        Text = "Open",
+        Text = $"View {thread.Replies.Count} repl{(thread.Replies.Count == 1 ? "y" : "ies")}",
         AutoSize = true,
-        Location = new(840, 85)
+        Location = new(10, 85)
       };
-      threadGroup.Controls.Add(openButton);
-      if (thread?.Author == User)
+      threadGroup.Controls.Add(viewRepliesBtn);
+      if (thread?.Author == Program.User)
       {
-        openButton.Location -= new Size(160, 0);
         Button editButton = new()
         {
           Text = "Edit",
@@ -153,13 +142,13 @@ public partial class Forum : Form
 
           if (choice == DialogResult.Yes)
           {
-            using HttpResponseMessage response = await Http
+            using HttpResponseMessage response = await Program.Http
               .DeleteAsync($"thread/{thread.Id}");
 
             response.EnsureSuccessStatusCode();
 
-            Threads = await FetchThreads();
-            UpdateThreads(Threads);
+            Program.Threads = await Fetch();
+            Update(Program.Threads);
           }
         };
         threadGroup.Controls.Add(editButton);
@@ -167,49 +156,6 @@ public partial class Forum : Form
       }
     }
   }
-
-  public static string RelativeTime(DateTime dateTime)
-  {
-    TimeSpan timeSpan = DateTime.Now.Subtract(dateTime);
-    if (timeSpan.TotalDays > 365)
-    {
-      return $"{timeSpan.TotalDays / 365:0} years ago";
-    }
-    if (timeSpan.TotalDays > 30)
-    {
-      return $"{timeSpan.TotalDays / 30:0} months ago";
-    }
-    if (timeSpan.TotalDays > 7)
-    {
-      return $"{timeSpan.TotalDays / 7:0} weeks ago";
-    }
-    if (timeSpan.TotalDays > 1)
-    {
-      return $"{timeSpan.TotalDays:0} days ago";
-    }
-    if (timeSpan.TotalHours > 1)
-    {
-      return $"{timeSpan.TotalHours:0} hours ago";
-    }
-    if (timeSpan.TotalMinutes > 1)
-    {
-      return $"{timeSpan.TotalMinutes:0} minutes ago";
-    }
-    if (timeSpan.TotalSeconds > 1)
-    {
-      return $"{timeSpan.TotalSeconds:0} seconds ago";
-    }
-    return "Now";
-  }
-
-  public static readonly HttpClient Http = new()
-  {
-    BaseAddress = new Uri("http://localhost:5190")
-  };
-  public static readonly JsonSerializerOptions JsonOptions = new()
-  {
-    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-  };
 
   readonly GroupBox topGroup = new()
   {
@@ -245,53 +191,3 @@ public partial class Forum : Form
     FlowDirection = FlowDirection.TopDown,
   };
 }
-
-public class Thread
-{
-  public Guid Id { get; set; }
-  public required string Author { get; set; }
-  public required string Title { get; set; }
-  public string? Description { get; set; }
-  public required DateTime CreatedAt { get; set; }
-  public DateTime? UpdatedAt { get; set; }
-
-  public ICollection<Reply> Replies { get; set; } = [];
-}
-
-public record ThreadCreateDto(
-  string Author,
-  string Title,
-  string? Description
-)
-{ }
-
-public record ThreadUpdateDto(
-  string? Title,
-  string? Description
-)
-{ }
-
-public class Reply
-{
-  public Guid Id { get; set; }
-  public Guid ThreadId { get; set; }
-  public required string Author { get; set; }
-  public required string Content { get; set; }
-  public required DateTime CreatedAt { get; set; }
-  public DateTime? UpdatedAt { get; set; }
-
-  [JsonIgnore]
-  public Thread? Thread { get; set; }
-}
-
-public record ReplyCreateDto(
-  Guid ThreadId,
-  string Author,
-  string Content
-)
-{ }
-
-public record ReplyUpdateDto(
-  string Content
-)
-{ }

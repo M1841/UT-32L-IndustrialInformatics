@@ -1,6 +1,6 @@
 ﻿namespace L04.T00.Client;
 
-partial class Forum
+partial class Threads
 {
   private System.ComponentModel.IContainer components = null;
 
@@ -18,6 +18,6 @@ partial class Forum
     this.components = new System.ComponentModel.Container();
     this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
     this.ClientSize = new System.Drawing.Size(960, 1080);
-    this.Text = "Forum";
+    this.Text = "Threads";
   }
 }

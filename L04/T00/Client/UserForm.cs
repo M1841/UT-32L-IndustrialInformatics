@@ -16,8 +16,8 @@ public class UserForm : Form
     {
       if (userTextbox.Text != "")
       {
-        Forum.User = userTextbox.Text;
-        new Forum().Show();
+        Program.User = userTextbox.Text;
+        new Threads().Show();
         Hide();
       }
     };

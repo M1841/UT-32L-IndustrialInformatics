@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 
@@ -17,20 +16,20 @@ public partial class ThreadForm : Form
       {
         using StringContent json = new(
           JsonSerializer.Serialize(new ThreadCreateDto(
-            Forum.User,
+            Program.User,
             titleTextbox.Text,
             descriptionTextbox.Text)
           ),
           Encoding.UTF8,
           "application/json");
 
-        using HttpResponseMessage response = await Forum.Http
+        using HttpResponseMessage response = await Program.Http
           .PostAsync("thread", json);
 
         response.EnsureSuccessStatusCode();
 
-        Forum.Threads = await Forum.FetchThreads();
-        Forum.UpdateThreads(Forum.Threads);
+        Program.Threads = await Threads.Fetch();
+        Threads.Update(Program.Threads);
 
         Close();
       }
@@ -56,13 +55,13 @@ public partial class ThreadForm : Form
           Encoding.UTF8,
           "application/json");
 
-        using HttpResponseMessage response = await Forum.Http
+        using HttpResponseMessage response = await Program.Http
           .PutAsync($"thread/{thread.Id}", json);
 
         response.EnsureSuccessStatusCode();
 
-        Forum.Threads = await Forum.FetchThreads();
-        Forum.UpdateThreads(Forum.Threads);
+        Program.Threads = await Threads.Fetch();
+        Threads.Update(Program.Threads);
 
         Close();
       }
