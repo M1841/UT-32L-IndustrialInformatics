@@ -10,15 +10,17 @@ public partial class Forum : Form
     try
     {
       InitializeComponent();
+      FormClosed += (sender, args) =>
+      {
+        Application.Exit();
+      };
 
       Controls.Add(topGroup);
-      topGroup.Controls.Add(userLabel);
-      topGroup.Controls.Add(userTextbox);
-      userTextbox.KeyUp += (sender, args) =>
+      topGroup.Controls.Add(new Label()
       {
-        newThreadBtn.Enabled = userTextbox.Text != "";
-        User = userTextbox.Text;
-      };
+        Text = User,
+        Location = new(20, 17)
+      });
       topGroup.Controls.Add(searchLabel);
       topGroup.Controls.Add(searchTextbox);
       searchTextbox.KeyUp += (sender, args) =>
@@ -87,44 +89,97 @@ public partial class Forum : Form
       GroupBox threadGroup = new()
       {
         Height = 125,
-        Width = 1920 / 2 - 35
+        Width = 1920 / 2 - 35,
+        DataContext = thread
       };
       ThreadsPanel.Controls.Add(threadGroup);
       threadGroup.Controls.Add(new Label()
       {
-        Text = $"{thread.Replies.Count} repl{(thread.Replies.Count == 1 ? "y" : "ies")}",
-        Dock = DockStyle.Top
-      });
-      threadGroup.Controls.Add(new Label()
-      {
-        Text = thread.Description,
-        Dock = DockStyle.Top
+        Text = thread.Title,
+        AutoSize = true,
+        Location = new(10, 0)
       });
       threadGroup.Controls.Add(new Label()
       {
         Text = $"{thread.Author} - {RelativeTime(thread.CreatedAt)}",
-        Dock = DockStyle.Top
+        AutoSize = true,
+        Location = new(750, 0)
       });
       threadGroup.Controls.Add(new Label()
       {
-        Text = thread.Title,
-        Dock = DockStyle.Top
+        Text = thread.Description,
+        AutoSize = true,
+        Location = new(10, 30)
       });
+      threadGroup.Controls.Add(new Label()
+      {
+        Text = $"{thread.Replies.Count} repl{(thread.Replies.Count == 1 ? "y" : "ies")}",
+        AutoSize = true,
+        Location = new(10, 95)
+      });
+
+      Button openButton = new()
+      {
+        Text = "Open",
+        AutoSize = true,
+        Location = new(840, 85)
+      };
+      threadGroup.Controls.Add(openButton);
+      if (thread?.Author == User)
+      {
+        openButton.Location -= new Size(160, 0);
+        Button editButton = new()
+        {
+          Text = "Edit",
+          AutoSize = true,
+          Location = new(760, 85)
+        };
+        editButton.Click += (sender, args) =>
+        {
+          new ThreadForm(thread).Show();
+        };
+        Button deleteButton = new()
+        {
+          Text = "Delete",
+          AutoSize = true,
+          Location = new(840, 85)
+        };
+        deleteButton.Click += async (sender, args) =>
+        {
+          DialogResult choice = MessageBox.Show(
+            $"Are you sure you want to delete \"{thread.Title}\" and all replies under it?",
+            "Confirm deletion",
+            MessageBoxButtons.YesNo);
+
+          if (choice == DialogResult.Yes)
+          {
+            using HttpResponseMessage response = await Http
+              .DeleteAsync($"thread/{thread.Id}");
+
+            response.EnsureSuccessStatusCode();
+
+            Threads = await FetchThreads();
+            UpdateThreads(Threads);
+          }
+        };
+        threadGroup.Controls.Add(editButton);
+        threadGroup.Controls.Add(deleteButton);
+      }
     }
   }
 
   public static string RelativeTime(DateTime dateTime)
   {
     TimeSpan timeSpan = DateTime.Now.Subtract(dateTime);
-    if (timeSpan.TotalDays >= 365 * 2)
+    if (timeSpan.TotalDays > 365)
     {
       return $"{timeSpan.TotalDays / 365:0} years ago";
     }
-    if (timeSpan.TotalDays >= 30 * 2)
+    if (timeSpan.TotalDays > 30)
     {
       return $"{timeSpan.TotalDays / 30:0} months ago";
     }
-    if (timeSpan.TotalDays >= 7 * 2)
+    if (timeSpan.TotalDays > 7)
     {
       return $"{timeSpan.TotalDays / 7:0} weeks ago";
     }
@@ -140,6 +195,10 @@ public partial class Forum : Form
     {
       return $"{timeSpan.TotalMinutes:0} minutes ago";
     }
+    if (timeSpan.TotalSeconds > 1)
+    {
+      return $"{timeSpan.TotalSeconds:0} seconds ago";
+    }
     return "Now";
   }
 
@@ -147,7 +206,7 @@ public partial class Forum : Form
   {
     BaseAddress = new Uri("http://localhost:5190")
   };
-  public static JsonSerializerOptions JsonOptions = new()
+  public static readonly JsonSerializerOptions JsonOptions = new()
   {
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
   };
@@ -157,19 +216,6 @@ public partial class Forum : Form
     Width = 1920 / 2,
     Height = 80,
     Location = new(0, 0)
-  };
-  readonly Label userLabel = new()
-  {
-    Text = "Nickname",
-    Width = 120,
-    Height = 20,
-    Location = new(12, 17)
-  };
-  readonly TextBox userTextbox = new()
-  {
-    Width = 100,
-    Height = 30,
-    Location = new(15, 40)
   };
   readonly Label searchLabel = new()
   {
@@ -186,11 +232,10 @@ public partial class Forum : Form
   };
   readonly Button newThreadBtn = new()
   {
-    Enabled = false,
     Text = "New Thread",
     Width = 120,
     Height = 30,
-    Location = new(1920 / 2 - 120 - 15, 40)
+    Location = new(20, 40)
   };
   static readonly FlowLayoutPanel ThreadsPanel = new()
   {

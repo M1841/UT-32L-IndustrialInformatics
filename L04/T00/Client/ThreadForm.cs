@@ -39,8 +39,34 @@ public partial class ThreadForm : Form
   public ThreadForm(Thread thread)
   {
     InitializeComponent();
-    submitBtn.Text = "Edit";
     AddControls();
+    submitBtn.Text = "Edit";
+    submitBtn.Enabled = true;
+    titleTextbox.Text = thread.Title;
+    descriptionTextbox.Text = thread.Description;
+    submitBtn.Click += async (sender, args) =>
+    {
+      if (titleTextbox.Text != "")
+      {
+        using StringContent json = new(
+          JsonSerializer.Serialize(new ThreadUpdateDto(
+            titleTextbox.Text,
+            descriptionTextbox.Text)
+          ),
+          Encoding.UTF8,
+          "application/json");
+
+        using HttpResponseMessage response = await Forum.Http
+          .PutAsync($"thread/{thread.Id}", json);
+
+        response.EnsureSuccessStatusCode();
+
+        Forum.Threads = await Forum.FetchThreads();
+        Forum.UpdateThreads(Forum.Threads);
+
+        Close();
+      }
+    };
   }
 
   void AddControls()
@@ -73,7 +99,7 @@ public partial class ThreadForm : Form
   };
   readonly TextBox descriptionTextbox = new()
   {
-    Height = 100,
+    Height = 70,
     Width = 600 - 30,
     Location = new(15, 105),
     Multiline = true
@@ -83,6 +109,6 @@ public partial class ThreadForm : Form
     Enabled = false,
     Height = 30,
     Width = 600 - 30,
-    Location = new(15, 230),
+    Location = new(15, 200),
   };
 }

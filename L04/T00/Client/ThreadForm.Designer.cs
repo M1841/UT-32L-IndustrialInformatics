@@ -17,7 +17,7 @@ partial class ThreadForm
   {
     this.components = new System.ComponentModel.Container();
     this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-    this.ClientSize = new System.Drawing.Size(600, 280);
+    this.ClientSize = new System.Drawing.Size(600, 250);
     this.Text = "Thread Form";
   }
 }
