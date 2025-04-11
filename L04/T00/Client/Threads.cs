@@ -76,7 +76,7 @@ public partial class Threads : Form
     return threads;
   }
 
-  public static void Update(Thread[] threads)
+  public void Update(Thread[] threads)
   {
     ThreadsPanel.Controls.Clear();
 
@@ -114,6 +114,11 @@ public partial class Threads : Form
         AutoSize = true,
         Location = new(10, 85)
       };
+      viewRepliesBtn.Click += (sender, args) =>
+      {
+        Program.RepliesWindow = new Replies(thread.Id);
+        Program.RepliesWindow.Show();
+      };
       threadGroup.Controls.Add(viewRepliesBtn);
       if (thread?.Author == Program.User)
       {
@@ -149,6 +154,11 @@ public partial class Threads : Form
 
             Program.Threads = await Fetch();
             Update(Program.Threads);
+
+            if (Program.RepliesWindow?.ThreadId == thread.Id)
+            {
+              Program.RepliesWindow.Close();
+            }
           }
         };
         threadGroup.Controls.Add(editButton);
@@ -183,11 +193,28 @@ public partial class Threads : Form
     Height = 30,
     Location = new(20, 40)
   };
-  static readonly FlowLayoutPanel ThreadsPanel = new()
+  readonly FlowLayoutPanel ThreadsPanel = new()
   {
     Width = 1920 / 2,
     Height = 1080 - 110,
     Location = new(15, 90),
     FlowDirection = FlowDirection.TopDown,
   };
+
+  private System.ComponentModel.Container? components = null;
+  protected override void Dispose(bool disposing)
+  {
+    if (disposing && (components != null))
+    {
+      components.Dispose();
+    }
+    base.Dispose(disposing);
+  }
+  private void InitializeComponent()
+  {
+    components = new System.ComponentModel.Container();
+    AutoScaleMode = AutoScaleMode.Font;
+    ClientSize = new System.Drawing.Size(960, 1080);
+    Text = "Threads";
+  }
 }

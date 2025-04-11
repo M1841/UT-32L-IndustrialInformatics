@@ -13,7 +13,12 @@ static class Program
   }
 
   public static string User = "";
+
   public static Thread[] Threads = [];
+  public static Reply[] Replies = [];
+
+  public static Threads? ThreadsWindow;
+  public static Replies? RepliesWindow;
 
   public static readonly HttpClient Http = new()
   {

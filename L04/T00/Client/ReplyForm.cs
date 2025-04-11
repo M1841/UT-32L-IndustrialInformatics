@@ -3,30 +3,33 @@ using System.Text.Json;
 
 namespace L04.T00.Client;
 
-public partial class ThreadForm : Form
+public partial class ReplyForm : Form
 {
-  public ThreadForm()
+  public ReplyForm(Guid threadId)
   {
     InitializeComponent();
     AddControls();
     submitBtn.Text = "Add";
     submitBtn.Click += async (sender, args) =>
     {
-      if (titleTextbox.Text != "")
+      if (contentTextbox.Text != "")
       {
         using StringContent json = new(
-          JsonSerializer.Serialize(new ThreadCreateDto(
+          JsonSerializer.Serialize(new ReplyCreateDto(
+            threadId,
             Program.User,
-            titleTextbox.Text,
-            descriptionTextbox.Text)
+            contentTextbox.Text)
           ),
           Encoding.UTF8,
           "application/json");
 
         using HttpResponseMessage response = await Program.Http
-          .PostAsync("thread", json);
+          .PostAsync("reply", json);
 
         response.EnsureSuccessStatusCode();
+
+        Program.Replies = await Program.RepliesWindow!.Fetch();
+        Program.RepliesWindow.Update(Program.Replies);
 
         Program.Threads = await Threads.Fetch();
         Program.ThreadsWindow!.Update(Program.Threads);
@@ -35,33 +38,31 @@ public partial class ThreadForm : Form
       }
     };
   }
-  public ThreadForm(Thread thread)
+  public ReplyForm(Reply reply)
   {
     InitializeComponent();
     AddControls();
     submitBtn.Text = "Edit";
     submitBtn.Enabled = true;
-    titleTextbox.Text = thread.Title;
-    descriptionTextbox.Text = thread.Description;
+    contentTextbox.Text = reply.Content;
     submitBtn.Click += async (sender, args) =>
     {
-      if (titleTextbox.Text != "")
+      if (contentTextbox.Text != "")
       {
         using StringContent json = new(
-          JsonSerializer.Serialize(new ThreadUpdateDto(
-            titleTextbox.Text,
-            descriptionTextbox.Text)
+          JsonSerializer.Serialize(new ReplyUpdateDto(
+            contentTextbox.Text)
           ),
           Encoding.UTF8,
           "application/json");
 
         using HttpResponseMessage response = await Program.Http
-          .PutAsync($"thread/{thread.Id}", json);
+          .PutAsync($"reply/{reply.Id}", json);
 
         response.EnsureSuccessStatusCode();
 
-        Program.Threads = await Threads.Fetch();
-        Program.ThreadsWindow!.Update(Program.Threads);
+        Program.Replies = await Program.RepliesWindow!.Fetch();
+        Program.RepliesWindow.Update(Program.Replies);
 
         Close();
       }
@@ -70,37 +71,25 @@ public partial class ThreadForm : Form
 
   void AddControls()
   {
-    Controls.Add(titleLabel);
-    Controls.Add(titleTextbox);
-    titleTextbox.KeyUp += (sender, args) =>
+    Controls.Add(contentLabel);
+    Controls.Add(contentTextbox);
+    contentTextbox.KeyUp += (sender, args) =>
     {
-      submitBtn.Enabled = titleTextbox.Text != "";
+      submitBtn.Enabled = contentTextbox.Text != "";
     };
-    Controls.Add(descriptionLabel);
-    Controls.Add(descriptionTextbox);
     Controls.Add(submitBtn);
   }
 
-  readonly Label titleLabel = new()
+  readonly Label contentLabel = new()
   {
-    Text = "Title",
+    Text = "Content",
     Location = new(10, 10)
   };
-  readonly TextBox titleTextbox = new()
-  {
-    Width = 600 - 30,
-    Location = new(15, 35)
-  };
-  readonly Label descriptionLabel = new()
-  {
-    Text = "Description (Optional)",
-    Location = new(10, 80)
-  };
-  readonly TextBox descriptionTextbox = new()
+  readonly TextBox contentTextbox = new()
   {
     Height = 70,
     Width = 600 - 30,
-    Location = new(15, 105),
+    Location = new(15, 35),
     Multiline = true
   };
   readonly Button submitBtn = new()
@@ -108,7 +97,7 @@ public partial class ThreadForm : Form
     Enabled = false,
     Height = 30,
     Width = 600 - 30,
-    Location = new(15, 200),
+    Location = new(15, 130),
   };
 
   private System.ComponentModel.Container? components = null;
@@ -124,8 +113,7 @@ public partial class ThreadForm : Form
   {
     components = new System.ComponentModel.Container();
     AutoScaleMode = AutoScaleMode.Font;
-    ClientSize = new Size(600, height: 250);
-    Text = "Thread Form";
+    ClientSize = new Size(600, 180);
+    Text = "Reply Form";
   }
-
 }

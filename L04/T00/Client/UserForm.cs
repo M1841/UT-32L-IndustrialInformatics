@@ -5,6 +5,7 @@ public class UserForm : Form
   public UserForm()
   {
     InitializeComponent();
+
     Controls.Add(userLabel);
     Controls.Add(userTextbox);
     userTextbox.KeyUp += (sender, args) =>
@@ -17,7 +18,8 @@ public class UserForm : Form
       if (userTextbox.Text != "")
       {
         Program.User = userTextbox.Text;
-        new Threads().Show();
+        Program.ThreadsWindow = new Threads();
+        Program.ThreadsWindow.Show();
         Hide();
       }
     };
