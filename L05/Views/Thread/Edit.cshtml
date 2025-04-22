@@ -1,0 +1,17 @@
+@model L05.Models.ThreadUpdateDto
+
+<form asp-controller="Thread" asp-action="Update" method="POST" asp-route-id="@Model.Id"
+  class="container-fluid d-flex flex-column gap-4">
+  <input type="hidden" asp-for="@Model.Id" required />
+  <label>
+    Title
+    <input type="text" asp-for="@Model.Title" required class="form-control" />
+  </label>
+
+  <label>
+    Description
+    <textarea asp-for="@Model.Description" class="form-control"></textarea>
+  </label>
+
+  <button type="submit" class="btn btn-light">Edit</button>
+</form>

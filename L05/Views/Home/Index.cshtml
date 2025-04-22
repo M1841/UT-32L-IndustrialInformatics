@@ -1,0 +1,10 @@
+﻿@model L05.Controllers.HomeController.UserDto
+
+<form asp-controller="Home" asp-action="SetNickname" method="POST" class="container-fluid d-flex flex-column gap-4">
+  <label>
+    Nickname
+    <input type="text" asp-for="@Model.Nickname" required class="form-control" />
+  </label>
+
+  <button type="submit" class="btn btn-light">Continue</button>
+</form>
