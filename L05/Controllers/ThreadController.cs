@@ -50,7 +50,6 @@ public class ThreadController(AppDbContext db) : Controller
 
     ViewData["Title"] = "Add Thread";
     return View(new ThreadCreateDto(
-      nickname,
       "",
       "")
     );
@@ -59,10 +58,20 @@ public class ThreadController(AppDbContext db) : Controller
   [HttpGet]
   public IActionResult Edit([FromRoute] Guid id)
   {
+    string? nickname = HttpContext.Session.GetString("Nickname");
+    if (nickname == null)
+    {
+      return RedirectToAction("Index", "Home");
+    }
+
     Models.Thread? thread = db.Threads
       .FirstOrDefault(t => t.Id == id);
 
     if (thread == null) { return NotFound(); }
+    if (nickname != thread.Author)
+    {
+      return RedirectToAction("Index", "Home");
+    }
 
     ViewData["Title"] = "Edit Thread";
     return View(new ThreadUpdateDto(
@@ -75,10 +84,19 @@ public class ThreadController(AppDbContext db) : Controller
   [HttpGet]
   public IActionResult Delete([FromRoute] Guid id)
   {
+    string? nickname = HttpContext.Session.GetString("Nickname");
+    if (nickname == null)
+    {
+      return RedirectToAction("Index", "Home");
+    }
     Models.Thread? thread = db.Threads
       .FirstOrDefault(t => t.Id == id);
 
     if (thread == null) { return NotFound(); }
+    if (nickname != thread.Author)
+    {
+      return RedirectToAction("Index", "Home");
+    }
 
     ViewData["Title"] = "Delete Thread";
     return View(new ThreadUpdateDto(
@@ -91,14 +109,19 @@ public class ThreadController(AppDbContext db) : Controller
   [HttpPost]
   public async Task<IActionResult> CreateAsync([FromForm] ThreadCreateDto dto)
   {
-    if (dto.Author == null || dto.Title == null)
+    string? nickname = HttpContext.Session.GetString("Nickname");
+    if (nickname == null)
     {
-      return BadRequest("Author and Title cannot be empty");
+      return RedirectToAction("Index", "Home");
+    }
+    if (dto.Title == null)
+    {
+      return BadRequest("Title cannot be empty");
     }
 
     Models.Thread thread = new()
     {
-      Author = dto.Author,
+      Author = nickname,
       Title = dto.Title,
       Description = dto.Description,
       CreatedAt = DateTime.Now
@@ -114,10 +137,20 @@ public class ThreadController(AppDbContext db) : Controller
   public async Task<IActionResult> UpdateAsync(
     [FromRoute] Guid id, [FromForm] ThreadUpdateDto dto)
   {
+    string? nickname = HttpContext.Session.GetString("Nickname");
+    if (nickname == null)
+    {
+      return RedirectToAction("Index", "Home");
+    }
+
     Models.Thread? thread = await db.Threads
       .FirstOrDefaultAsync(t => t.Id == id);
 
     if (thread == null) { return NotFound(); }
+    if (nickname != thread.Author)
+    {
+      return RedirectToAction("Index", "Home");
+    }
 
     thread.Title = dto.Title ?? thread.Title;
     thread.Description = dto.Description ?? thread.Description;
@@ -131,11 +164,21 @@ public class ThreadController(AppDbContext db) : Controller
   [HttpPost]
   public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
   {
+    string? nickname = HttpContext.Session.GetString("Nickname");
+    if (nickname == null)
+    {
+      return RedirectToAction("Index", "Home");
+    }
+
     Models.Thread? thread = await db.Threads
       .Include(t => t.Replies)
       .FirstOrDefaultAsync(t => t.Id == id);
 
     if (thread == null) { return NotFound(); }
+    if (nickname != thread.Author)
+    {
+      return RedirectToAction("Index", "Home");
+    }
 
     db.Threads.Remove(thread);
     await db.SaveChangesAsync();

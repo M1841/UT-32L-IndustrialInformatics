@@ -20,7 +20,6 @@ public record ThreadsPageViewModel(
 { }
 
 public record ThreadCreateDto(
-  string Author,
   string Title,
   string? Description
 )

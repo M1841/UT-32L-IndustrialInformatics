@@ -1,0 +1,13 @@
+@model L05.Models.ReplyUpdateDto
+
+<form asp-controller="Reply" asp-action="Update" method="POST" asp-route-id="@Model.Id"
+  class="container-fluid d-flex flex-column gap-4">
+  <input type="hidden" asp-for="@Model.Id" required />
+
+  <label>
+    Content
+    <textarea asp-for="@Model.Content" class="form-control"></textarea>
+  </label>
+
+  <button type="submit" class="btn btn-light">Edit</button>
+</form>

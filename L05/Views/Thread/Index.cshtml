@@ -8,14 +8,14 @@
 
   @foreach (var thread in Model.Threads)
   {
-    <div class="container-fluid form-control p-3">
+    <div class="container-fluid form-control p-3 d-flex flex-column gap-3">
       <div class="d-flex justify-content-between">
-        <h5>@thread.Title</h5>
-        <p>@thread.Author - @Program.RelativeTime(@thread.CreatedAt)</p>
+        <h5 class="m-0">@thread.Title</h5>
+        <p class="m-0">@thread.Author - @Program.RelativeTime(@thread.CreatedAt)</p>
       </div>
-      <p>@thread.Description</p>
+      <p class="m-0">@thread.Description</p>
       <div class="d-flex justify-content-between">
-        <a class="btn btn-light">
+        <a class="btn btn-light" asp-controller="Reply" asp-action="Index" asp-route-id="@thread.Id">
           @($"View {thread.Replies.Count} repl{(thread.Replies.Count == 1 ? "y" : "ies")}")
         </a>
         @if (thread.Author == Model.Nickname)
@@ -27,5 +27,10 @@
         }
       </div>
     </div>
+  }
+
+  @if (Model.Threads.Length == 0)
+  {
+    <p>No threads found</p>
   }
 </div>

@@ -1,0 +1,32 @@
+@model L05.Models.RepliesPageViewModel
+
+<div class="container-fluid d-flex flex-column gap-2">
+  <form asp-controller="Reply" asp-action="Index" method="GET">
+    <input class="form-control" name="search" placeholder="Search" value="@Model.Search" />
+  </form>
+  <a class="btn btn-light" asp-controller="Reply" asp-action="Add" asp-route-id="@Model.ThreadId">New Reply</a>
+
+  @foreach (var reply in Model.Replies)
+  {
+    <div class="container-fluid form-control p-3 d-flex flex-column gap-3">
+      <div class="d-flex justify-content-between">
+        <p class="m-0">@reply.Author - @Program.RelativeTime(reply.CreatedAt)</p>
+      </div>
+      <p class="m-0">@reply.Content</p>
+      @if (reply.Author == Model.Nickname)
+      {
+        <div class="d-flex justify-content-between">
+          <div class="btn-group">
+            <a class="btn btn-light" asp-controller="Reply" asp-action="Edit" asp-route-id="@reply.Id">Edit</a>
+            <a class="btn btn-light" asp-controller="Reply" asp-action="Delete" asp-route-id="@reply.Id">Delete</a>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (Model.Replies.Length == 0)
+  {
+    <p>No replies found</p>
+  }
+</div>

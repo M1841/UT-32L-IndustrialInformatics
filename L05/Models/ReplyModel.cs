@@ -17,14 +17,22 @@ public class Reply
   public Thread? Thread { get; set; }
 }
 
+public record RepliesPageViewModel(
+  Reply[] Replies,
+  Guid ThreadId,
+  string Nickname,
+  string Search
+)
+{ }
+
 public record ReplyCreateDto(
   Guid ThreadId,
-  string Author,
   string Content
 )
 { }
 
 public record ReplyUpdateDto(
+  Guid Id,
   string Content
 )
 { }

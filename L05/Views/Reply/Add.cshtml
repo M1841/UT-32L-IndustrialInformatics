@@ -1,0 +1,12 @@
+@model L05.Models.ReplyCreateDto
+
+<form asp-controller="Reply" asp-action="Create" method="POST" class="container-fluid d-flex flex-column gap-4">
+  <input type="hidden" asp-for="@Model.ThreadId" required />
+
+  <label>
+    Content
+    <textarea asp-for="@Model.Content" class="form-control"></textarea>
+  </label>
+
+  <button type="submit" class="btn btn-light">Add</button>
+</form>
