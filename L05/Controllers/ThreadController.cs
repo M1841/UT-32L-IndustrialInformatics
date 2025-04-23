@@ -57,14 +57,30 @@ public class ThreadController(AppDbContext db) : Controller
   }
 
   [HttpGet]
-  public async Task<IActionResult> EditAsync([FromRoute] Guid id)
+  public IActionResult Edit([FromRoute] Guid id)
   {
-    Models.Thread? thread = await db.Threads
-      .FirstOrDefaultAsync(t => t.Id == id);
+    Models.Thread? thread = db.Threads
+      .FirstOrDefault(t => t.Id == id);
 
     if (thread == null) { return NotFound(); }
 
     ViewData["Title"] = "Edit Thread";
+    return View(new ThreadUpdateDto(
+      thread.Id,
+      thread.Title,
+      thread.Description)
+    );
+  }
+
+  [HttpGet]
+  public IActionResult Delete([FromRoute] Guid id)
+  {
+    Models.Thread? thread = db.Threads
+      .FirstOrDefault(t => t.Id == id);
+
+    if (thread == null) { return NotFound(); }
+
+    ViewData["Title"] = "Delete Thread";
     return View(new ThreadUpdateDto(
       thread.Id,
       thread.Title,
