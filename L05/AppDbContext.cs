@@ -10,7 +10,8 @@ public class AppDbContext : DbContext
   public DbSet<Reply> Replies { get; set; }
 
   protected override void OnConfiguring(DbContextOptionsBuilder options)
-    => options.UseSqlite("DataSource=II_L05.sqlite");
+      // => options.UseSqlite("DataSource=II_L05.sqlite");
+      => options.UseSqlServer("Server=localhost;Database=II_L05;Trusted_Connection=True;Encrypt=False");
 
   public static void SeedData()
   {
