@@ -1,4 +1,4 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { map, switchMap } from "rxjs";
 
@@ -26,6 +26,7 @@ export class DeleteThreadComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
+  readonly nickname = computed(this.api.nickname);
   readonly id = signal<string>("");
   readonly title = signal<string>("");
 
@@ -51,8 +52,12 @@ export class DeleteThreadComponent {
         })
       )
       .subscribe((res) => {
-        const { title } = res.body.result;
-        this.title.set(title);
+        const { author, title } = res.body.result;
+        if (this.nickname() !== author) {
+          this.router.navigate(["/"]);
+        } else {
+          this.title.set(title);
+        }
       });
   }
 }

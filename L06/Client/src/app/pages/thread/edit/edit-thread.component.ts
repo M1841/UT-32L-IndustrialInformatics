@@ -1,4 +1,4 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { map, switchMap } from "rxjs";
@@ -34,6 +34,7 @@ export class EditThreadComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
+  readonly nickname = computed(this.api.nickname);
   readonly id = signal<string>("");
   readonly form = new FormGroup({
     title: new FormControl(""),
@@ -63,8 +64,12 @@ export class EditThreadComponent {
         })
       )
       .subscribe((res) => {
-        const { title, description } = res.body.result;
-        this.form.setValue({ title, description });
+        const { author, title, description } = res.body.result;
+        if (this.nickname() !== author) {
+          this.router.navigate(["/"]);
+        } else {
+          this.form.setValue({ title, description });
+        }
       });
   }
 }
