@@ -1,12 +1,11 @@
-import { Component, computed, inject, signal } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
-import { EMPTY, map, switchMap } from "rxjs";
-
 import { ApiService } from "@/services/api/api.service";
+import { Component, computed, inject, signal } from "@angular/core";
+import { FormGroup, FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { map, switchMap, EMPTY } from "rxjs";
 
 @Component({
-  selector: "app-edit-thread",
+  selector: "app-edit-reply",
   imports: [ReactiveFormsModule],
   template: `
     <form
@@ -15,13 +14,12 @@ import { ApiService } from "@/services/api/api.service";
       class="container-fluid d-flex flex-column gap-4"
     >
       <label>
-        Title
-        <input formControlName="title" required class="form-control" />
-      </label>
-
-      <label>
-        Description
-        <textarea formControlName="description" class="form-control"></textarea>
+        Content
+        <textarea
+          formControlName="content"
+          required
+          class="form-control"
+        ></textarea>
       </label>
 
       <button type="submit" class="btn btn-light">Edit</button>
@@ -29,23 +27,25 @@ import { ApiService } from "@/services/api/api.service";
   `,
   styles: ``,
 })
-export class EditThreadComponent {
+export class EditReplyComponent {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
   readonly nickname = computed(this.api.nickname);
+  readonly threadId = signal<string>("");
   readonly id = signal<string>("");
   readonly form = new FormGroup({
-    title: new FormControl(""),
-    description: new FormControl(""),
+    content: new FormControl(""),
   });
 
   handleSubmit() {
     if (this.form.valid) {
-      this.api.put(`thread/${this.id()}`, this.form.value).subscribe({
+      this.api.put(`reply/${this.id()}`, this.form.value).subscribe({
         next: () => {
-          this.router.navigate(["/thread"]);
+          this.router.navigate(["/reply"], {
+            queryParams: { thread_id: this.threadId() },
+          });
         },
         error: (err) => {
           console.error(err);
@@ -57,14 +57,14 @@ export class EditThreadComponent {
   ngOnInit() {
     this.route.queryParams
       .pipe(
-        map((params) => params["thread_id"]),
+        map((params) => params["reply_id"]),
         switchMap((id) => {
           if (!id) {
             this.router.navigate(["/thread"]);
             return EMPTY;
           } else {
             this.id.set(id);
-            return this.api.get<{ result: Thread }>(`thread/${id}`);
+            return this.api.get<Reply>(`reply/${id}`);
           }
         })
       )
@@ -72,11 +72,12 @@ export class EditThreadComponent {
         if (!res.body) {
           this.router.navigate(["/thread"]);
         } else {
-          const { author, title, description } = res.body.result;
+          const { author, content, threadId } = res.body;
           if (this.nickname() !== author) {
             this.router.navigate(["/"]);
           } else {
-            this.form.setValue({ title, description });
+            this.form.setValue({ content });
+            this.threadId.set(threadId);
           }
         }
       });

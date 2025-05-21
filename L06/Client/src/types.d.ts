@@ -7,3 +7,12 @@ type Thread = {
   title: string;
   updatedAt: string;
 };
+
+type Reply = {
+  author: string;
+  createdAt: string;
+  content: string;
+  id: string;
+  threadId: string;
+  updatedAt: string;
+};

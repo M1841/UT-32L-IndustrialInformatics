@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 
 import { ApiService } from "@/services/api/api.service";
-import { relativeTime as utilsRelativeTime } from "@/utils/relativeTime";
+import { relativeTime } from "@/utils/relativeTime";
 
 @Component({
   selector: "app-thread",
@@ -22,9 +22,7 @@ import { relativeTime as utilsRelativeTime } from "@/utils/relativeTime";
         <div class="container-fluid form-control p-3 d-flex flex-column gap-3">
           <div class="d-flex justify-content-between">
             <h5 class="m-0">{{ thread.title }}</h5>
-            <p class="m-0">
-              {{ thread.author }} - {{ relativeTime(thread.createdAt) }}
-            </p>
+            <p class="m-0">{{ thread.author }} - {{ thread.createdAt }}</p>
           </div>
           <p class="m-0">{{ thread.description }}</p>
           <div class="d-flex justify-content-between">
@@ -86,13 +84,16 @@ export class ThreadComponent {
     }
   }
 
-  relativeTime(time: string) {
-    return utilsRelativeTime(new Date(time));
-  }
-
   ngOnInit() {
     this.api.get<Thread[]>("thread").subscribe((res) => {
-      this.threads.set(res.body ?? []);
+      this.threads.set(
+        res.body?.map((thread) => {
+          return {
+            ...thread,
+            createdAt: relativeTime(new Date(thread.createdAt)),
+          };
+        }) ?? []
+      );
       this.displayedThreads.set(this.threads());
     });
   }
