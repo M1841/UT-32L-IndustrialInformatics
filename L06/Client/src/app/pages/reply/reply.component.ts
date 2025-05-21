@@ -39,7 +39,7 @@ import { map, pipe, switchMap, tap } from "rxjs";
         </div>
       }
       @if (this.displayedReplies().length == 0) {
-        <p>No replies found</p>
+        <p class="text-center pt-2 text-muted">No replies found</p>
       }
     </div>
   `,
@@ -56,6 +56,7 @@ export class ReplyComponent {
   readonly searchForm = new FormGroup({
     query: new FormControl(),
   });
+
   handleSearch() {
     const query = this.searchForm.value.query;
     if (!!query) {
@@ -79,7 +80,7 @@ export class ReplyComponent {
     this.route.queryParams
       .pipe(
         switchMap((params) => {
-          return this.api.get<any[]>(`reply/${params["threadId"]}`);
+          return this.api.get<any[]>(`reply/${params["thread_id"]}`);
         })
       )
       .subscribe((res) => {

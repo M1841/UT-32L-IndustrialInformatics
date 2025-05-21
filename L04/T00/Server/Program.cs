@@ -9,7 +9,18 @@ public static class Program
   {
     AppDbContext.SeedData();
 
-    WebApplication app = WebApplication.CreateBuilder(args).Build();
+    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+    builder.Services.AddCors(options =>
+      {
+        options.AddDefaultPolicy(policy =>
+        {
+          policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        });
+      });
+
+    WebApplication app = builder.Build();
+
+    app.UseCors();
 
     // Thread - CREATE
     app.MapPost(
@@ -34,6 +45,18 @@ public static class Program
         await db.SaveChangesAsync();
 
         return Results.Ok(thread);
+      }
+    );
+
+    // Thread - READ One
+    app.MapGet(
+      "thread/{id}",
+      ([FromRoute] Guid id) =>
+      {
+        using AppDbContext db = new();
+        return Results.Ok(db.Threads
+          .Include(t => t.Replies)
+          .FirstOrDefaultAsync(t => t.Id == id));
       }
     );
 

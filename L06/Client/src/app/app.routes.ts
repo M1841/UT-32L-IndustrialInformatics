@@ -3,6 +3,9 @@ import { Routes } from "@angular/router";
 import { HomeComponent } from "@/pages/home/home.component";
 import { ThreadComponent } from "@/pages/thread/thread.component";
 import { ReplyComponent } from "@/pages/reply/reply.component";
+import { CreateThreadComponent } from "@/pages/thread/create/create-thread.component";
+import { EditThreadComponent } from "@/pages/thread/edit/edit-thread.component";
+import { DeleteThreadComponent } from "@/pages/thread/delete/delete-thread.component";
 
 export const routes: Routes = [
   {
@@ -12,6 +15,18 @@ export const routes: Routes = [
   {
     path: "thread",
     component: ThreadComponent,
+  },
+  {
+    path: "thread/create",
+    component: CreateThreadComponent,
+  },
+  {
+    path: "thread/edit",
+    component: EditThreadComponent,
+  },
+  {
+    path: "thread/delete",
+    component: DeleteThreadComponent,
   },
   {
     path: "reply",
